@@ -4,29 +4,36 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-import com.luv2code.hibernate.demo.entity.Student;
+import com.luv2code.hibernate.demo.entity.Instructor;
+import com.luv2code.hibernate.demo.entity.InstructorDetail;
 
-public class CreateStudentDemo {
+public class DeleteDemo {
 
 	public static void main(String[] args) {
 		//Create session factory 
 		SessionFactory factory = new Configuration()
 				.configure("hibernate.cfg.xml")
-				.addAnnotatedClass(Student.class)
+				.addAnnotatedClass(Instructor.class)
+				.addAnnotatedClass(InstructorDetail.class)
 				.buildSessionFactory();
 		//Create Session
 		Session session = factory.getCurrentSession();
 		
 		try {
-			System.out.println("creating student object");
-			Student tempStudent = new Student("Kamrul", "Bari", "pochachele@gmail.com");
-
+			int theId=2;
+			
 			System.out.println("transacion started");
 			session.beginTransaction();
-
-			System.out.println("Saving student object");
-			session.save(tempStudent);
-
+			
+			Instructor tempInstructor =
+					session.get(Instructor.class, theId);
+			
+			//Note: this will also delete InstructorDetail
+			//because of CascadeType.ALL
+			if(tempInstructor != null) {
+				session.delete(tempInstructor);
+			}
+			
 			session.getTransaction().commit();
 			System.out.println("All done!");
 		}
